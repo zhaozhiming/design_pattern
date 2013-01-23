@@ -1,0 +1,95 @@
+策略模式的示例代码:
+public class Context {
+    private Strategy strategy;
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void contextInterface() {
+        strategy.algorithmInterface();
+    }
+}
+
+public interface Strategy {
+    void algorithmInterface();
+}
+
+public class ConcreteStrategyA implements Strategy {
+    @Override
+    public void algorithmInterface() {
+        System.out.println("concrete strategy A algorithm");
+    }
+}
+
+public class ConcreteStrategyB implements Strategy {
+    @Override
+    public void algorithmInterface() {
+        System.out.println("concrete strategy B algorithm");
+    }
+}
+
+public class ConcreteStrategyC implements Strategy {
+    @Override
+    public void algorithmInterface() {
+        System.out.println("concrete strategy C algorithm");
+    }
+}
+
+使用策略模式实现项目实例：
+public class Product {
+    private String name;
+    private double price;
+    private PriceStrategy priceStrategy;
+
+    public Product(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public double calcPrice() {
+        price = priceStrategy.calc(price);
+        return price;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("商品名称 : %s, 价格 : %.2f", name, price);
+    }
+
+    public void setPriceStrategy(PriceStrategy priceStrategy) {
+        this.priceStrategy = priceStrategy;
+    }
+}
+
+public interface PriceStrategy {
+    double calc(double price);
+}
+
+public class NormalPriceStrategy implements PriceStrategy {
+    @Override
+    public double calc(double price) {
+        return price;
+    }
+}
+
+public class ImportPriceStrategy implements PriceStrategy {
+    @Override
+    public double calc(double price) {
+        return price * 1.1;
+    }
+}
+
+public class ExpensivePriceStrategy implements PriceStrategy {
+    @Override
+    public double calc(double price) {
+        return price * 1.2;
+    }
+}
+
+public class ImportExpensivePriceStrategy implements PriceStrategy {
+    @Override
+    public double calc(double price) {
+        return price * 1.1 * 1.2;
+    }
+}

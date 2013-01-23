@@ -1,0 +1,44 @@
+没有使用构建者模式之前的代码：
+public class Client {
+    public Order createOrderOne() {
+        return new Order(1, "张三", asList(new Product("电脑", 5000d)));
+    }
+
+    public Order createOrderTwo() {
+        return new Order(2, "李四", asList(new Product("化妆品", 80d),
+                new Product("衣服", 500d)));
+    }
+}
+
+使用原始构建者模式的代码：
+public class Client {
+    public Order createOrderOne() {
+        OrderBuilder builder = new OrderBuilder();
+        Director director = new Director(builder);
+        director.makeOrder(1, "张三", asList(new Product("电脑", 5000d)));
+        return builder.getResult();
+    }
+
+    public Order createOrderTwo() {
+        OrderBuilder builder = new OrderBuilder();
+        Director director = new Director(builder);
+        director.makeOrder(2, "李四", asList(new Product("化妆品", 80d),
+                new Product("衣服", 500d)));
+        return builder.getResult();
+    }
+}
+
+使用简化版构建者模式的代码：
+public class Client {
+    public Order createOrderOne() {
+        return OrderBuilder.aOrder().buildId(1).buildCustomer("张三")
+                .buildProducts(asList(new Product("电脑", 5000d)))
+                .build();
+    }
+
+    public Order createOrderTwo() {
+        return OrderBuilder.aOrder().buildId(2).buildCustomer("李四")
+                .buildProducts(asList(new Product("化妆品", 80d), new Product("衣服", 500d)))
+                .build();
+    }
+}

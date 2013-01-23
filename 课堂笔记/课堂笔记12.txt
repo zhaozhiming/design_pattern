@@ -1,0 +1,85 @@
+外观模式的代码示例：
+public class ModuleA {
+    public void methodA() {
+        System.out.println("moduleA methodA");
+    }
+}
+
+public interface InterfaceB {
+    void methodB();
+}
+
+public class InterfaceBImpl implements InterfaceB {
+    @Override
+    public void methodB() {
+        System.out.println("interfaceB methodB");
+    }
+}
+
+public class Facade {
+    private ModuleA moduleA;
+    private InterfaceB interfaceB;
+    private SuperClassC classC;
+
+    public Facade() {
+        moduleA = new ModuleA();
+        interfaceB = new InterfaceBImpl();
+        classC = new SubClassC();
+    }
+
+    public void run() {
+        moduleA.methodA();
+        interfaceB.methodB();
+        classC.methodC();
+    }
+}
+
+public class Client {
+    public static void main(String[] args) {
+        Facade facade = new Facade();
+        facade.run();
+    }
+}
+
+使用外观模式实现电子管家功能：
+public class Steward {
+    private Gift gift;
+    private NewYearDinner newYearDinner;
+    private Car car;
+    private Kitchen kitchen;
+    private Litter litter;
+    private Sundries sundries;
+
+    public Steward() {
+        gift = new Gift();
+        newYearDinner = new NewYearDinner();
+        car = new Car();
+
+        kitchen = new Kitchen();
+        litter = new Litter();
+        sundries = new Sundries();
+    }
+
+    public String prepareForNewYear() {
+        StringBuilder message = new StringBuilder();
+        message.append(gift.buy())
+                .append(newYearDinner.cook())
+                .append(car.rent());
+
+        return message.toString();
+    }
+
+    public String cleanForNewYear() {
+        StringBuilder message = new StringBuilder();
+        message.append(kitchen.clean())
+                .append(litter.drop())
+                .append(sundries.clearUp());
+        return message.toString();
+    }
+}
+
+public class Kitchen {
+    public String clean() {
+        return "打扫厨房\n";
+    }
+}

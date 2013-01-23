@@ -1,0 +1,88 @@
+责任链模式的示例代码：
+public abstract class Handler {
+    protected Handler successor;
+
+    public void setSuccessor(Handler successor) {
+        this.successor = successor;
+    }
+
+    public abstract void handleRequest();
+}
+
+public class ConcreteHandler1 extends Handler {
+    @Override
+    public void handleRequest() {
+        if (successor != null) {
+            successor.handleRequest();
+            return;
+        }
+
+        System.out.println("concrete handler 1 handled");
+    }
+}
+
+使用责任链模式实现项目实例：
+public abstract class Dragon {
+    protected Dragon successor;
+    protected int attack;
+
+    public void setSuccessor(Dragon successor) {
+        this.successor = successor;
+    }
+
+    public abstract String defend(Hero hero);
+}
+
+public class BabyDragon extends Dragon {
+    public BabyDragon() {
+        this.attack = 500;
+    }
+
+    @Override
+    public String defend(Hero hero) {
+        if (hero.getAttack() > attack && successor != null) {
+            return "打赢小龙，可以挑战巨龙\n" + successor.defend(hero);
+        }
+        return "游戏结束，回去再修炼吧";
+    }
+}
+
+public class LargeDragon extends Dragon {
+    public LargeDragon() {
+        this.attack = 1000;
+    }
+
+    @Override
+    public String defend(Hero hero) {
+        if (hero.getAttack() > attack && successor != null) {
+            return "打赢巨龙，可以挑战暗黑龙\n" + successor.defend(hero);
+        }
+        return "游戏结束，回去再修炼吧";
+    }
+}
+
+public class DarkDragon extends Dragon {
+    public DarkDragon() {
+        this.attack = 2000;
+    }
+
+    @Override
+    public String defend(Hero hero) {
+        if (hero.getAttack() > attack) {
+            return "恭喜,你打赢了所有恶龙，可以去解救你的公主了";
+        }
+        return "游戏结束，回去再修炼吧";
+    }
+}
+
+public class Hero {
+    private int attack;
+
+    public Hero(int attack) {
+        this.attack = attack;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+}

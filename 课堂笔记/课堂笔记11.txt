@@ -1,0 +1,135 @@
+装饰者模式代码示例：
+public abstract class Component {
+    public abstract void operation();
+}
+
+public class ConcreteComponent extends Component {
+    @Override
+    public void operation() {
+        System.out.println("concrete component operation");
+    }
+}
+
+public class Decorator extends Component {
+    private Component component;
+
+    public Decorator(Component component) {
+        this.component = component;
+    }
+
+    @Override
+    public void operation() {
+        component.operation();
+    }
+}
+
+public class ConcreteDecoratorA extends Decorator {
+    private String addedState;
+
+    public ConcreteDecoratorA(Component component) {
+        super(component);
+    }
+
+    @Override
+    public void operation() {
+        super.operation();
+        System.out.println("add state is " + addedState);
+    }
+
+    public void setAddedState(String addedState) {
+        this.addedState = addedState;
+    }
+}
+
+public class ConcreteDecoratorB extends Decorator {
+
+    public ConcreteDecoratorB(Component component) {
+        super(component);
+    }
+
+    public void addedBehavior() {
+        System.out.println("add behave");
+    }
+
+    @Override
+    public void operation() {
+        super.operation();
+        addedBehavior();
+    }
+}
+
+使用装饰者模式实现房屋出租功能：
+public abstract class House {
+    protected String address;
+    protected int price;
+
+    public House(String address, int price) {
+        this.address = address;
+        this.price = price;
+    }
+
+    protected House() {
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public abstract String rent();
+}
+
+public class SmallHouse extends House {
+    public SmallHouse(String address, int price) {
+        super(address, price);
+    }
+
+    @Override
+    public String rent() {
+        return "地址:" + address + ",每月房租" + price;
+    }
+}
+
+public class HouseDecorator extends House {
+    protected House house;
+
+    public HouseDecorator(House house) {
+        this.house = house;
+    }
+
+    @Override
+    public String rent() {
+        return house.rent();
+    }
+}
+
+public class Lift extends HouseDecorator {
+
+    protected Lift(House house) {
+        super(house);
+    }
+
+    @Override
+    public String rent() {
+        int rentPrice = house.getPrice();
+        house.setPrice(rentPrice + 100);
+
+        return "有电梯," + super.rent();
+    }
+}
+
+使用装饰者模式改造JAVA reader装饰器:
+public class UpperReader extends BufferedReader {
+    public UpperReader(Reader in) {
+        super(in);
+    }
+
+    @Override
+    public String readLine() throws IOException {
+        String line = super.readLine();
+        return line.toUpperCase();
+    }
+}

@@ -1,0 +1,118 @@
+访问者模式的代码示例：
+public interface Visitor {
+    void visitConcreteElementA(ConcreteElementA concreteElementA);
+
+    void visitConcreteElementB(ConcreteElementB concreteElementB);
+}
+
+public class ConcreteVisitor1 implements Visitor {
+    @Override
+    public void visitConcreteElementA(ConcreteElementA concreteElementA) {
+        concreteElementA.operationA();
+    }
+
+    @Override
+    public void visitConcreteElementB(ConcreteElementB concreteElementB) {
+        concreteElementB.operationB();
+    }
+}
+
+public interface Element {
+    void accept(Visitor visitor);
+}
+
+public class ConcreteElementA implements Element {
+    public void operationA() {
+        System.out.println("concrete element A operation A");
+    }
+
+    public void otherOperationA() {
+        System.out.println("concrete element A other operation A");
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitConcreteElementA(this);
+    }
+}
+
+public class ObjectStructure {
+    private List<Element> elements = new ArrayList<Element>();
+
+    public void addElement(Element element) {
+        elements.add(element);
+    }
+
+    public void visit(Visitor visitor) {
+        for (Element element : elements) {
+            element.accept(visitor);
+        }
+    }
+}
+
+使用访问者模式实现项目实例：
+public class JobManager {
+    private List<User> users = new ArrayList<User>();
+
+    public void addUser(User user) {
+        users.add(user);
+    }
+
+    public int getUserCount() {
+        return users.size();
+    }
+
+    public String visitUserInfo(Visitor visitor) {
+        StringBuilder message = new StringBuilder();
+        for (User user : users) {
+            message.append(user.accept(visitor)).append("\n");
+        }
+
+        return message.toString();
+    }
+}
+
+public interface Visitor {
+    String visitPersonInfo(PersonUser personUser);
+
+    String visitEnterpriseInfo(EnterpriseUser enterpriseUser);
+}
+
+public class UserInfoVisitor implements Visitor {
+    @Override
+    public String visitPersonInfo(PersonUser personUser) {
+        return personUser.getPersonInfo();
+    }
+
+    @Override
+    public String visitEnterpriseInfo(EnterpriseUser enterpriseUser) {
+        return enterpriseUser.getEnterpriseInfo();
+    }
+}
+
+public interface User {
+    String accept(Visitor visitor);
+}
+
+public class PersonUser implements User {
+    private String name;
+    private List<String> wantedJobs = new ArrayList<String>();
+
+    public PersonUser(String name) {
+        this.name = name;
+        wantedJobs = asList("开发工程师", "网页设计师");
+    }
+
+    @Override
+    public String accept(Visitor visitor) {
+        return visitor.visitPersonInfo(this);
+    }
+
+    public String getPersonInfo() {
+        return String.format("个人用户信息:姓名%s", name);
+    }
+
+    public String getWantedJobsInfo() {
+        return String.format("%s应聘的岗位:%s", name, wantedJobs.toString());
+    }
+}

@@ -1,0 +1,75 @@
+模板方法的代码示例：
+public abstract class AbstractClass {
+
+    public void templateMethod() {
+        System.out.println("template method start");
+        primitiveOperation1();
+        System.out.println("template method running");
+        primitiveOperation2();
+        System.out.println("template method end");
+    }
+
+    protected abstract void primitiveOperation1();
+
+    protected abstract void primitiveOperation2();
+}
+
+public class ConcreteClass1 extends AbstractClass {
+    @Override
+    protected void primitiveOperation1() {
+        System.out.println("concrete class 1 operation1");
+    }
+
+    @Override
+    protected void primitiveOperation2() {
+        System.out.println("concrete class 1 operation2");
+    }
+}
+
+使用模板方法实现项目实例：
+public abstract class Report {
+    protected boolean isSelfEvaluation;
+
+    public String generate() {
+        StringBuilder report = new StringBuilder();
+        report.append(head()).append("\n");
+        report.append(body()).append("\n");
+        report.append(footer());
+
+        if (isSelfEvaluation) {
+            report.append("\n");
+            report.append(selfEvaluation());
+        }
+
+        return report.toString();
+    }
+
+    protected abstract String selfEvaluation();
+
+    protected abstract String body();
+
+    private String head() {
+        return "尊敬的领导:";
+    }
+
+    private String footer() {
+        return "在今后的工作中争取更好的成绩";
+    }
+}
+
+public class EndYearReport extends Report {
+    public EndYearReport() {
+        isSelfEvaluation = true;
+    }
+
+    @Override
+    protected String selfEvaluation() {
+        return "自我总结报告";
+    }
+
+    @Override
+    public String body() {
+        return "汇报这一年工作的具体内容";
+    }
+
+}

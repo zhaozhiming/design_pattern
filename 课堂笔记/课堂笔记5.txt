@@ -1,0 +1,68 @@
+标准的单例模式实现（延迟加载）：
+public class WebCount {
+    private static WebCount webCount;
+
+    private WebCount() {
+    }
+
+    public static WebCount getInstance() {
+        if (webCount == null) {
+            webCount = new WebCount();
+        }
+        return webCount;
+    }
+}
+
+标准的单例模式实现（贪婪加载）：
+public class WebCount {
+    private static WebCount webCount = new WebCount();
+
+    private WebCount() {
+    }
+
+    public static WebCount getInstance() {
+        return webCount;
+    }
+}
+
+单例模式的双重检查加锁：
+public class WebCount {
+    private volatile static WebCount webCount;
+
+    private WebCount() {
+    }
+
+    public synchronized static WebCount getInstance() {
+        if (webCount == null) {
+            synchronized (WebCount.class) {
+                if (webCount == null) {
+                    webCount = new WebCount();
+                }
+            }
+        }
+        return webCount;
+    }
+}
+
+单例模式的lazy initialization holder class模式：
+public class WebCount {
+
+    private static class Holder{
+        private static WebCount webCount = new WebCount();
+    }
+
+    private WebCount() {
+    }
+
+    public static WebCount getInstance() {
+        return Holder.webCount;
+    }
+
+单例模式和枚举:
+public enum WebCount {
+    webCount;
+}
+
+
+
+

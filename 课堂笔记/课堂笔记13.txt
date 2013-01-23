@@ -1,0 +1,129 @@
+享元模式的示例代码：
+public interface Flyweight {
+    void operation(String extrinsicState);
+}
+
+public class ConcreteFlyweight implements Flyweight {
+    private String intrinsicState = "intrinsicState";
+
+    @Override
+    public void operation(String extrinsicState) {
+        System.out.println("concrete flyweight : " + intrinsicState
+                + " - " + extrinsicState);
+    }
+}
+
+public class UnsharedConcreteFlyweight implements Flyweight {
+    private List<Flyweight> flyweights = new ArrayList<Flyweight>();
+
+    @Override
+    public void operation(String extrinsicState) {
+        for (Flyweight flyweight : flyweights) {
+            flyweight.operation(extrinsicState);
+        }
+    }
+
+    public void addFlyweight(Flyweight flyweight) {
+        flyweights.add(flyweight);
+    }
+}
+
+public class FlyweightFactory {
+    private Map<String, Flyweight> flyweights = new HashMap<String, Flyweight>();
+
+    public Flyweight getFlyweight(String key) {
+        if (flyweights.containsKey(key)) {
+            return flyweights.get(key);
+        }
+
+        Flyweight flyweight = new ConcreteFlyweight();
+        flyweights.put(key, flyweight);
+        return flyweight;
+    }
+
+    public Flyweight getFlyweight(List<String> keys) {
+        UnsharedConcreteFlyweight unsharedConcreteFlyweight = new UnsharedConcreteFlyweight();
+        for (String key : keys) {
+            Flyweight flyweight = getFlyweight(key);
+            unsharedConcreteFlyweight.addFlyweight(flyweight);
+        }
+        return unsharedConcreteFlyweight;
+    }
+}
+
+使用享元模式实现用户角色管理功能：
+public interface Role {
+
+    String login(String username);
+}
+
+public class Guest implements Role {
+    private String roleName = "游客";
+
+    Guest() {
+    }
+
+    @Override
+    public String login(String username) {
+        return username + "以" + roleName + "身份登录，只有普通用户权限";
+    }
+}
+
+public class RoleGroup implements Role{
+    private List<Role> roles = new ArrayList<Role>();
+
+    RoleGroup() {
+    }
+
+    @Override
+    public String login(String username) {
+        StringBuilder message = new StringBuilder();
+        for (Role role : roles) {
+            message.append(role.login(username)).append("\n");
+        }
+        return message.toString();
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+}
+
+public class RoleFactory {
+    private static RoleFactory roleFactory;
+    private Map<String, Role> roles = new HashMap<String, Role>();
+
+    private RoleFactory() {
+    }
+
+    public synchronized static RoleFactory getInstance() {
+        if (roleFactory == null) {
+            roleFactory = new RoleFactory();
+        }
+        return roleFactory;
+    }
+
+    public Role getRole(String roleName) {
+        if (roles.containsKey(roleName)) {
+            return roles.get(roleName);
+        }
+
+        try {
+            Role role = (Role) Class.forName("design.pattern.flyweight."
+                    + roleName).newInstance();
+            roles.put(roleName, role);
+            return role;
+        } catch (Exception e) {
+            throw new RuntimeException("获取角色失败");
+        }
+    }
+
+    public Role getRole(List<String> roleNames) {
+        RoleGroup roleGroup = new RoleGroup();
+        for (String roleName : roleNames) {
+            Role role = getRole(roleName);
+            roleGroup.addRole(role);
+        }
+        return roleGroup;
+    }
+}

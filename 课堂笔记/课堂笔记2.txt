@@ -1,0 +1,58 @@
+初始客户端代码：
+public String useProduct(String type) {
+        Phone phone;
+        if ("Apple".equals(type)) {
+            phone = new ApplePhone();
+        } else if ("Samsung".equals(type)) {
+            phone = new SamsungPhone();
+        } else if ("Windows".equals(type)) {
+            phone = new WindowsPhone();
+        } else {
+            throw new RuntimeException("invalid type");
+        }
+
+        return phone.use();
+    }
+
+简单工厂：
+public Phone create(String type) {
+        Phone phone;
+        if ("Apple".equals(type)) {
+            phone = new ApplePhone();
+        } else if ("Samsung".equals(type)) {
+            phone = new SamsungPhone();
+        } else if ("Windows".equals(type)) {
+            phone = new WindowsPhone();
+        } else {
+            throw new RuntimeException("invalid type");
+        }
+        return phone;
+    }
+
+简单工厂：
+public static Phone create(String type) {
+        Phone phone;
+        if ("Apple".equals(type)) {
+            phone = new ApplePhone();
+        } else if ("Samsung".equals(type)) {
+            phone = new SamsungPhone();
+        } else if ("Windows".equals(type)) {
+            phone = new WindowsPhone();
+        } else {
+            throw new RuntimeException("invalid type");
+        }
+        return phone;
+    }
+
+重构后的代码：
+        public Phone create(String type) {
+            try {
+                File configFile = new File("config/config.properties");
+                Properties properties = new Properties();
+                properties.load(new FileInputStream(configFile));
+                String phoneClassName = properties.getProperty(type);
+                return (Phone) Class.forName(phoneClassName).newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("create error");
+            }
+        }

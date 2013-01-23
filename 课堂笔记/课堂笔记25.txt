@@ -1,0 +1,167 @@
+备忘录模式的示例代码：
+public class Originator {
+    private String state;
+
+    public Originator(String state) {
+        this.state = state;
+    }
+
+    public void setMemento(Memento memento) {
+        this.state = memento.getState();
+    }
+
+    public Memento createMemento() {
+        return new Memento(state);
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+}
+
+public class Memento {
+    private String state;
+
+    public Memento(String state) {
+        this.state = state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+}
+
+public class Caretaker {
+    private Memento memento;
+
+    public Memento getMemento() {
+        return memento;
+    }
+
+    public void setMemento(Memento memento) {
+        this.memento = memento;
+    }
+}
+
+使用备忘录模式实现项目实例：
+public class OperationSystem {
+    private String type;
+    private int diskCount;
+    private List<String> drives;
+
+    public OperationSystem(String type, int diskCount, List<String> drives) {
+        this.type = type;
+        this.diskCount = diskCount;
+        this.drives = drives;
+    }
+
+    public String getSystemInfo() {
+        return String.format("系统类型是:%s, 磁盘分区数:%d, 硬件驱动信息:%s",
+                type, diskCount, drives.toString());
+    }
+
+    public SystemMemento createSystemMemento() {
+        return new SystemMemento(type, diskCount, drives);
+    }
+
+    public void changeSystemInfo(String type, int diskCount, List<String> drives) {
+        this.type = type;
+        this.diskCount = diskCount;
+        this.drives = drives;
+    }
+
+    public void restore(SystemMemento systemMemento) {
+        this.type = systemMemento.getType();
+        this.diskCount = systemMemento.getDiskCount();
+        this.drives = systemMemento.getDrives();
+    }
+}
+
+public class SystemMemento {
+    private String type;
+    private int diskCount;
+    private List<String> drives;
+
+    public SystemMemento(String type, int diskCount, List<String> drives) {
+        this.type = type;
+        this.diskCount = diskCount;
+        this.drives = drives;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getDiskCount() {
+        return diskCount;
+    }
+
+    public List<String> getDrives() {
+        return drives;
+    }
+}
+
+public class SystemMementoManager {
+    private SystemMemento systemMemento;
+
+    public void setSystemMemento(SystemMemento systemMemento) {
+        this.systemMemento = systemMemento;
+    }
+
+    public SystemMemento getSystemMemento() {
+        return systemMemento;
+    }
+}
+
+备忘录模式结合原型模式的一个精简结构：
+public class OperationSystem implements Cloneable {
+
+    private String type;
+    private int diskCount;
+    private List<String> drives;
+    private OperationSystem systemBackup;
+
+    public OperationSystem(String type, int diskCount, List<String> drives) {
+        this.type = type;
+        this.diskCount = diskCount;
+        this.drives = drives;
+    }
+
+    public String getSystemInfo() {
+        return String.format("系统类型是:%s, 磁盘分区数:%d, 硬件驱动信息:%s",
+                type, diskCount, drives.toString());
+    }
+
+    public void createSystemMemento() {
+        try {
+            this.systemBackup = clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("备份系统失败");
+        }
+    }
+
+    public void changeSystemInfo(String type, int diskCount, List<String> drives) {
+        this.type = type;
+        this.diskCount = diskCount;
+        this.drives = drives;
+    }
+
+    public void restore() {
+        this.type = systemBackup.type;
+        this.diskCount = systemBackup.diskCount;
+        this.drives = systemBackup.drives;
+    }
+
+    @Override
+    protected OperationSystem clone() throws CloneNotSupportedException {
+        return (OperationSystem) super.clone();
+    }
+}

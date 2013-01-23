@@ -1,0 +1,158 @@
+迭代器模式的示例代码：
+public interface Aggregate {
+    int size();
+
+    String get(int index);
+
+    Iterator createIterator();
+}
+
+public class ConcreteAggregate implements Aggregate {
+    private String[] strings;
+
+    public ConcreteAggregate(String[] strings) {
+        this.strings = strings;
+    }
+
+    @Override
+    public int size() {
+        return strings.length;
+    }
+
+    @Override
+    public String get(int index) {
+        if (index < 0 || index >= strings.length) {
+            return null;
+        }
+        return strings[index];
+    }
+
+    @Override
+    public Iterator createIterator() {
+        return new ConcreteIterator(this);
+    }
+}
+
+public interface Iterator {
+    boolean hasNext();
+
+    String next();
+}
+
+public class ConcreteIterator implements Iterator {
+    private Aggregate aggregate;
+    private int index;
+
+    public ConcreteIterator(Aggregate aggregate) {
+        this.aggregate = aggregate;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return index < aggregate.size();
+    }
+
+    @Override
+    public String next() {
+        String next = aggregate.get(index);
+        index++;
+        return next;
+    }
+}
+
+使用迭代器模式实现项目实例：
+public class Achievement {
+    private String name;
+    private int amount;
+
+    public Achievement(String name, int amount) {
+        this.name = name;
+        this.amount = amount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+}
+
+public interface Iterator {
+    boolean hasNext();
+
+    Achievement next();
+}
+public class AchievementReportIterator implements Iterator {
+    private AchievementReport achievementReport;
+    private int index;
+
+    public AchievementReportIterator(AchievementReport AchievementReport) {
+        achievementReport = AchievementReport;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return index < achievementReport.size()
+                && achievementReport.get(index) != null;
+    }
+
+    @Override
+    public Achievement next() {
+        return achievementReport.get(index++);
+    }
+}
+
+public interface AchievementReport {
+    Iterator createIterator();
+
+    int size();
+
+    Achievement get(int index);
+
+    String print();
+}
+
+public class NorthAchievementReport implements AchievementReport {
+    private Achievement[] achievements;
+
+    public NorthAchievementReport(Achievement[] achievements) {
+        this.achievements = achievements;
+    }
+
+    @Override
+    public Iterator createIterator() {
+        return new AchievementReportIterator(this);
+    }
+
+    @Override
+    public int size() {
+        return achievements.length;
+    }
+
+    @Override
+    public Achievement get(int index) {
+        if (0 <= index && index < achievements.length) {
+            return achievements[index];
+        }
+        return null;
+    }
+
+    @Override
+    public String print() {
+        StringBuilder report = new StringBuilder();
+        report.append("北区业绩报告:\n");
+        Iterator iterator = createIterator();
+        int totalAmount = 0;
+        while (iterator.hasNext()) {
+            Achievement achievement = iterator.next();
+            report.append("名称 : ").append(achievement.getName())
+                    .append(", 金额 : ").append(achievement.getAmount())
+                    .append("\n");
+            totalAmount += achievement.getAmount();
+        }
+        report.append("总销售额 : ").append(totalAmount);
+        return report.toString();
+    }
+}

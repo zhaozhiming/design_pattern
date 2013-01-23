@@ -1,0 +1,86 @@
+类适配器的demo：
+public class Client {
+    private Target target;
+
+    public Client(Target target) {
+        this.target = target;
+    }
+
+    public void run() {
+        target.request();
+    }
+}
+
+
+public class Target {
+    public void request() {
+
+    }
+}
+
+public interface Adaptee {
+    public void specificRequest();
+}
+
+public class Adapter extends Target implements Adaptee {
+
+    @Override
+    public void request() {
+        specificRequest();
+    }
+
+    @Override
+    public void specificRequest() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+}
+
+类适配器的PS游戏适配器实现：
+public class PsGameClassAdapter extends PsGame implements PcGame {
+    @Override
+    public String play() {
+        return "类适配器:" + this.playGame();
+    }
+}
+
+使用适配器模式实现java的enumeration适配器：
+public class EnumerationAdapter implements Iterator {
+    private Enumeration enumeration;
+
+    public EnumerationAdapter(Enumeration enumeration) {
+        this.enumeration = enumeration;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return enumeration.hasMoreElements();
+    }
+
+    @Override
+    public Object next() {
+        return enumeration.nextElement();
+    }
+
+    @Override
+    public void remove() {
+        throw new RuntimeException("不支持remove方法");
+    }
+}
+
+双向适配器：
+public class BothWayAdapter extends Adaptee implements Target {
+    private Adaptee adaptee;
+    private Target target;
+
+    @Override
+    public void request() {
+        adaptee.specificRequest();
+    }
+
+    @Override
+    void specificRequest() {
+        target.request();
+    }
+}
+
+

@@ -1,0 +1,84 @@
+命令模式的示例代码：
+public interface Command {
+    void execute();
+}
+
+public class ConcreteCommand implements Command {
+    private Receiver receiver;
+
+    public ConcreteCommand(Receiver receiver) {
+        this.receiver = receiver;
+    }
+
+    @Override
+    public void execute() {
+        receiver.action();
+    }
+}
+
+public class Receiver {
+    public void action() {
+        System.out.println("receiver action");
+    }
+}
+
+public class Invoker {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void executeCommand() {
+        command.execute();
+    }
+}
+
+使用命令模式实现项目实例：
+public interface Command {
+    String execute();
+}
+
+public class AttackCommand implements Command {
+    protected String target;
+    protected Troop troop;
+
+    public AttackCommand(String target) {
+        this.target = target;
+    }
+
+    @Override
+    public String execute() {
+        return troop.attack(target);
+    }
+}
+
+public class Commander {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public String releaseCommand() {
+        return command.execute();
+    }
+}
+
+public interface Troop {
+    String attack(String target);
+
+    String retreat(String locale);
+}
+public class Army implements Troop {
+
+    @Override
+    public String attack(String target) {
+        return "陆军部队攻击" + target;
+    }
+
+    @Override
+    public String retreat(String locale) {
+        return "陆军部队撤退到" + locale;
+    }
+}

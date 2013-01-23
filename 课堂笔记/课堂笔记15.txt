@@ -1,0 +1,88 @@
+解释者模式的代码示例：
+public class Context {
+
+}
+
+public interface AbstractExpression {
+    void interpret(Context context);
+}
+
+public class TerminalExpression implements AbstractExpression {
+    @Override
+    public void interpret(Context context) {
+        System.out.println("terminal expression interpret");
+    }
+}
+
+public class NonTerminalExpression implements AbstractExpression {
+    @Override
+    public void interpret(Context context) {
+        System.out.println("non terminal expression interpret");
+    }
+}
+
+使用解释者模式实现项目示例：
+public class CalcContext {
+    private Map<Expression, Integer> expressions = new HashMap<Expression, Integer>();
+
+    public void assign(Expression expression, int value) {
+        expressions.put(expression, value);
+    }
+
+    public int getValue(Expression expression) {
+        return expressions.get(expression);
+    }
+}
+
+public interface Expression {
+    int interpret(CalcContext context);
+
+    String getExpression(CalcContext context);
+}
+
+public class IntegerExpression implements Expression {
+    @Override
+    public int interpret(CalcContext context) {
+        return context.getValue(this);
+    }
+
+    @Override
+    public String getExpression(CalcContext context) {
+        return Integer.toString(context.getValue(this));
+    }
+}
+
+public abstract class SignExpression implements Expression {
+    protected Expression leftExpression;
+    protected Expression rightExpression;
+    protected String expressionFormat;
+
+    public SignExpression(Expression leftExpression, Expression rightExpression) {
+        this.leftExpression = leftExpression;
+        this.rightExpression = rightExpression;
+    }
+
+    @Override
+    public String getExpression(CalcContext context) {
+        return String.format(expressionFormat,
+                leftExpression.interpret(context),
+                rightExpression.interpret(context),
+                interpret(context));
+    }
+}
+
+public class AddExpression extends SignExpression {
+
+    public AddExpression(Expression leftExpression, Expression rightExpression) {
+        super(leftExpression, rightExpression);
+        expressionFormat = "%d+%d=%d";
+    }
+
+    @Override
+    public int interpret(CalcContext context) {
+        return leftExpression.interpret(context)
+                + rightExpression.interpret(context);
+    }
+
+}
+

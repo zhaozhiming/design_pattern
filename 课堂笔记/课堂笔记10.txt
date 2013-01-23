@@ -1,0 +1,147 @@
+组合模式示例代码：
+public abstract class Component {
+    protected String name;
+
+    protected Component(String name) {
+        this.name = name;
+    }
+
+    public abstract void operation();
+
+    public void add(Component component) {
+        throw new UnsupportedOperationException("不支持该操作");
+    }
+
+    public void remove(Component component) {
+        throw new UnsupportedOperationException("不支持该操作");
+    }
+
+    public Component getChild(int index) {
+        throw new UnsupportedOperationException("不支持该操作");
+    }
+
+}
+
+public class Leaf extends Component {
+    protected Leaf(String name) {
+        super(name);
+    }
+
+    @Override
+    public void operation() {
+        System.out.println(name + ": operation");
+    }
+}
+
+public class Composite extends Component {
+    private List<Component> components = new ArrayList<Component>();
+
+    protected Composite(String name) {
+        super(name);
+    }
+
+    @Override
+    public void operation() {
+        for (Component component : components) {
+            component.operation();
+        }
+    }
+
+    @Override
+    public void add(Component component) {
+        components.add(component);
+    }
+
+    @Override
+    public void remove(Component component) {
+        components.remove(component);
+    }
+
+    @Override
+    public Component getChild(int index) {
+        return components.get(index);
+    }
+}
+
+使用组合模式实现菜单功能：
+public abstract class MenuComponent {
+    protected String name;
+    protected String operation;
+
+    protected MenuComponent(String name, String operation) {
+        this.name = name;
+        this.operation = operation;
+    }
+
+
+    public void addMenuComponent(MenuComponent menuComponent) {
+        throw new UnsupportedOperationException("不支持该操作");
+    }
+
+    public MenuComponent getMenuComponent(int index) {
+        throw new UnsupportedOperationException("不支持该操作");
+    }
+
+    public void removeMenuComponent(MenuComponent menuComponent) {
+        throw new UnsupportedOperationException("不支持该操作");
+    }
+
+    public abstract String open();
+}
+
+public class MenuItem extends MenuComponent {
+    public MenuItem(String name, String operation) {
+        super(name, operation);
+    }
+
+    @Override
+    public String open() {
+        return name + ":" + operation;
+    }
+}
+
+public class Menu extends MenuComponent {
+    private List<MenuComponent> menuComponents = new ArrayList<MenuComponent>();
+
+    public Menu(String name, String operation) {
+        super(name, operation);
+    }
+
+    @Override
+    public void addMenuComponent(MenuComponent menuComponent) {
+        menuComponents.add(menuComponent);
+    }
+
+    @Override
+    public MenuComponent getMenuComponent(int index) {
+        return (menuComponents.size() != 0) ?
+                menuComponents.get(index) : null;
+    }
+
+    @Override
+    public void removeMenuComponent(MenuComponent menuComponent) {
+        menuComponents.remove(menuComponent);
+    }
+
+    @Override
+    public String open() {
+        StringBuilder message = new StringBuilder();
+        message.append(name).append(":").append(operation).append("\n");
+        for (MenuComponent menuComponent : menuComponents) {
+            message.append(menuComponent.open()).append("\n");
+        }
+        return message.toString();
+    }
+}
+
+安全的组合模式：
+public abstract class Component {
+    protected String name;
+
+    protected Component(String name) {
+        this.name = name;
+    }
+
+    public abstract void operation();
+
+}

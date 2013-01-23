@@ -1,0 +1,146 @@
+单一职责原则:
+
+public class User {
+    private String name;
+    private int age;
+
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public void changeUserInfo(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+public class UserManager {
+    private List<User> users = new ArrayList<User>();
+
+    public void addUser(User user) {
+        users.add(user);
+    }
+}
+
+开发闭合原则的示例代码:
+public class Report {
+    private String content;
+    private Format format;
+
+    public Report(String content) {
+        this.content = content;
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
+    public void print() {
+        if (format == null) {
+            throw new RuntimeException("报告格式不正确，无法打印");
+        }
+
+        format.use(content);
+    }
+}
+
+public interface Format {
+    void use(String content);
+}
+
+public class XmlFormat implements Format {
+    @Override
+    public void use(String content) {
+        System.out.println("<xml>");
+        System.out.println(content);
+        System.out.println("</xml>");
+    }
+}
+
+里氏替换原则的示例代码：
+public class Father {
+    public void action(List<String> list) {
+        for (String string : list) {
+            System.out.println(string);
+        }
+    }
+}
+
+public class Son extends Father {
+}
+
+依赖倒置原则的示例代码：
+public class Person {
+    private String name;
+    private Clothes clothes;
+
+    public Person(String name) {
+        this.name = name;
+    }
+
+    public Person(Clothes clothes) {
+        this.clothes = clothes;
+    }
+
+    public void setClothes(Clothes clothes) {
+        this.clothes = clothes;
+    }
+
+    public void wear() {
+        clothes.use();
+    }
+}
+
+public interface Clothes {
+    void use();
+}
+
+public class Shirt implements Clothes {
+    @Override
+    public void use() {
+        System.out.println("穿衬衣");
+    }
+}
+
+接口隔离原则的示例代码：
+public interface Dao1 {
+    void insert(Object record);
+
+    void delete(Object record);
+
+}
+
+public interface Dao2 {
+    Object queryBy(int id);
+
+    Object queryBy(String name);
+
+}
+
+最少知识原则的示例代码:
+public class Commander {
+    private Spy spy;
+
+    public void getEnemyInfo() {
+//        spy.getEnemy().getMessage();
+        spy.getEnemyMessage();
+    }
+}
+
+public class Spy {
+    public Enemy getEnemy() {
+        return new Enemy();
+    }
+
+    public String getEnemyMessage() {
+        return new Enemy().getMessage();
+    }
+}
+
+
+public class Enemy {
+    public String getMessage() {
+        return null;
+    }
+}

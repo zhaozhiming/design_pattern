@@ -1,0 +1,132 @@
+观察者模式的示例代码：
+public abstract class Subject {
+    protected List<Observer> observers = new ArrayList<Observer>();
+    protected abstract String getState();
+
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    void nofityObservers() {
+        for (Observer observer : observers) {
+            observer.update(this);
+        }
+    }
+}
+
+public class ConcreteSubject extends Subject {
+    private String subjectState;
+
+    public void setSubjectState(String subjectState) {
+        this.subjectState = subjectState;
+        nofityObservers();
+    }
+
+    @Override
+    protected String getState() {
+        return subjectState;
+    }
+}
+
+public interface Observer {
+    void update(Subject subject);
+}
+
+public class ConcreteObserver implements Observer {
+    private String observerState;
+
+    @Override
+    public void update(Subject subject) {
+        observerState = subject.getState();
+        System.out.println("concrete observer state is " + observerState);
+    }
+}
+
+使用观察者模式实现项目实例：
+public abstract class Show {
+    protected String name;
+    protected List<Spectator> spectators = new ArrayList<Spectator>();
+
+    protected Show(String name) {
+        this.name = name;
+    }
+
+    public void addSpectator(Spectator spectator) {
+        spectators.add(spectator);
+    }
+
+    public int getSpectatorsCount() {
+        return spectators.size();
+    }
+
+    public void removeSpectator(Spectator spectator) {
+        spectators.remove(spectator);
+    }
+
+    public String notifySpectators() {
+        StringBuilder message = new StringBuilder();
+        for (Spectator spectator : spectators) {
+            message.append(spectator.update(this)).append("\n");
+        }
+        return message.toString();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public abstract String changeShowInfo(String channel, String time);
+
+    public abstract String getChannel();
+
+    public abstract String getTime();
+}
+
+public class Teleplay extends Show {
+
+    private String channel;
+    private String time;
+
+    public Teleplay(String name) {
+        super(name);
+    }
+
+    @Override
+    public String changeShowInfo(String channel, String time) {
+        this.channel = channel;
+        this.time = time;
+        return notifySpectators();
+    }
+
+    @Override
+    public String getChannel() {
+        return channel;
+    }
+
+    @Override
+    public String getTime() {
+        return time;
+    }
+}
+
+public interface Spectator {
+    String update(Show show);
+}
+
+public class YoungSpectator implements Spectator {
+    private String name;
+
+    public YoungSpectator(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String update(Show show) {
+        return String.format("%s收看的节目:%s,节目的频道变更为%s,时间变更为%s",
+                name, show.getName(), show.getChannel(), show.getTime());
+    }
+}

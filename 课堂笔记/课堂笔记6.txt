@@ -1,0 +1,48 @@
+原型模式的自定义实现:
+public interface User {
+    User cloneUser();
+}
+
+public class IndividualUser implements User {
+    @Override
+    public User cloneUser() {
+        IndividualUser individualUser = new IndividualUser();
+        individualUser.setType("个人用户");
+        individualUser.setMessage(POSITIONS);
+        return individualUser;
+    }
+}
+
+    public String login(User user, String userName) {
+        user = user.cloneUser();
+        return user.login(userName);
+    }
+
+使用java的Cloneable接口实现原型模式：
+public class IndividualUser implements Cloneable {
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        IndividualUser clone = (IndividualUser) super.clone();
+        clone.setType("个人用户");
+        clone.setMessage(POSITIONS);
+        return clone;
+    }
+}
+
+使用java的Cloneable接口实现深克隆：
+public class Position implements Cloneable {
+@Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+}
+public class EnterpriseUser implements User, Cloneable{
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        EnterpriseUser clone = (EnterpriseUser) super.clone();
+        clone.setType("企业用户");
+        clone.setPosition((Position) position.clone());
+        return clone;
+    }
+}
+

@@ -1,0 +1,199 @@
+状态模式的示例代码：
+public class Context {
+    private State state;
+    private State stateA;
+    private State stateB;
+
+    public Context() {
+        stateA = new ConcreteStateA();
+        stateB = new ConcreteStateB();
+        state = stateA;
+    }
+
+    public void request() {
+        state.handle(this);
+    }
+
+    public State getStateB() {
+        return stateB;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public State getStateA() {
+        return stateA;
+    }
+
+    public State getState() {
+        return state;
+    }
+}
+
+public interface State {
+    void handle(Context context);
+}
+
+public class ConcreteStateA implements State {
+    @Override
+    public void handle(Context context) {
+        System.out.println("concrete state A handle");
+        context.setState(context.getStateB());
+    }
+
+    @Override
+    public String toString() {
+        return "state A";
+    }
+}
+
+public class ConcreteStateB implements State {
+    @Override
+    public void handle(Context context) {
+        System.out.println("concrete state B handle");
+        context.setState(context.getStateA());
+    }
+
+
+    @Override
+    public String toString() {
+        return "state B";
+    }
+}
+
+使用状态模式实现项目实例:
+public class BugManager {
+    private BugState bugState;
+    private BugState submitState;
+    private BugState devState;
+    private BugState reviewState;
+    private Expert expert;
+    private BugState fixedState;
+
+    public BugManager() {
+        this.submitState = new SubmitState();
+        this.devState = new DevState();
+        this.reviewState = new ReviewState();
+        this.fixedState = new FixedState();
+    }
+
+    public void findBug() {
+        bugState = submitState;
+    }
+
+    public String getCurrentBugState() {
+        return bugState.toString();
+    }
+
+    public String submit() {
+        return bugState.handle(this);
+    }
+
+    public BugState getDevState() {
+        return devState;
+    }
+
+    public void setBugState(BugState bugState) {
+        this.bugState = bugState;
+    }
+
+    public String dev() {
+        return bugState.handle(this);
+    }
+
+    public BugState getReviewState() {
+        return reviewState;
+    }
+
+    public String review(Expert expert) {
+        setExpert(expert);
+        return bugState.handle(this);
+    }
+
+    public void setExpert(Expert expert) {
+        this.expert = expert;
+    }
+
+    public String getExpertOpinion() {
+        return expert.getOpinion();
+    }
+
+    public BugState getFixedState() {
+        return fixedState;
+    }
+
+}
+
+public interface BugState {
+    String handle(BugManager bugManager);
+}
+
+public class SubmitState implements BugState {
+
+    @Override
+    public String toString() {
+        return "提交状态";
+    }
+
+    @Override
+    public String handle(BugManager bugManager) {
+        bugManager.setBugState(bugManager.getDevState());
+        return "缺陷已提交，现在是开发状态";
+    }
+}
+
+public class DevState implements BugState {
+    @Override
+    public String handle(BugManager bugManager) {
+        bugManager.setBugState(bugManager.getReviewState());
+        return "缺陷已经开发完成，进入复审状态";
+    }
+
+    @Override
+    public String toString() {
+        return "开发状态";
+    }
+}
+
+public class ReviewState implements BugState {
+    @Override
+    public String handle(BugManager bugManager) {
+        if (bugManager.getExpertOpinion().equals("通过")) {
+            bugManager.setBugState(bugManager.getFixedState());
+            return "缺陷修复完成，本次修改结束";
+        }
+        bugManager.setBugState(bugManager.getDevState());
+        return "缺陷开发有问题，回到开发状态";
+    }
+
+    @Override
+    public String toString() {
+        return "复审状态";
+    }
+}
+
+public class FixedState implements BugState {
+
+    @Override
+    public String handle(BugManager bugManager) {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "修复完成状态";
+    }
+}
+
+public class Expert {
+    private String opinion;
+
+    public Expert(String opinion) {
+        this.opinion = opinion;
+    }
+
+    public String getOpinion() {
+        return opinion;
+    }
+}

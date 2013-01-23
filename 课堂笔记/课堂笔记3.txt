@@ -1,0 +1,48 @@
+抽象工厂--工厂接口：
+public abstract class PhoneFactory {
+    public Phone create() {
+        Model model = createModel();
+        Cpu cpu = createCpu();
+        OperatingSystem os = createOs();
+        return new Phone(model, cpu, os);
+    }
+
+    protected abstract OperatingSystem createOs();
+
+    protected abstract Cpu createCpu();
+
+    protected abstract Model createModel();
+}
+
+抽象工厂--工厂实现：
+public class ApplePhoneFactory extends PhoneFactory {
+
+    @Override
+    protected OperatingSystem createOs() {
+        return new AppleOperatingSystem();
+    }
+
+    @Override
+    protected Cpu createCpu() {
+        return new AppleCpu();
+    }
+
+    @Override
+    protected Model createModel() {
+        return new AppleModel();
+    }
+}
+
+抽象工厂--产品的接口：
+public interface Model {
+    String getMessage();
+}
+
+抽象工厂--产品的实现：
+public class AppleModel implements Model {
+    @Override
+    public String getMessage() {
+        return "IPhone5";
+    }
+}
+

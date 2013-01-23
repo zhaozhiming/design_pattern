@@ -1,0 +1,70 @@
+适配器结构图代码实现：
+public class Client {
+    public static void main(String[] args) {
+        Target target = new Adapter(new Adaptee());
+        target.request();
+    }
+}
+
+public interface Target {
+    void request();
+}
+
+public class Adaptee {
+    void specificRequest() {
+
+    }
+}
+
+public class Adapter implements Target {
+    private Adaptee adaptee;
+
+    public Adapter(Adaptee adaptee) {
+        this.adaptee = adaptee;
+    }
+
+    @Override
+    public void request() {
+        adaptee.specificRequest();
+    }
+}
+
+使用适配者模式实现实际需求：
+public class PcMachine {
+    private PcGame pcGame;
+
+    public PcMachine(PcGame pcGame) {
+        this.pcGame = pcGame;
+    }
+
+    public String playGame() {
+        return pcGame.play();
+    }
+}
+
+public interface PcGame {
+    String play();
+}
+
+public class PsGame {
+    public String playGame() {
+        return "插入游戏光盘\n" + "加载游戏\n" +
+                "运行游戏\n" + "使用手柄来玩游戏";
+    }
+}
+
+public class PsGameAdapter implements PcGame {
+
+    private PsGame psGame;
+
+    public PsGameAdapter(PsGame psGame) {
+        this.psGame = psGame;
+    }
+
+    @Override
+    public String play() {
+        return psGame.playGame();
+    }
+}
+
+

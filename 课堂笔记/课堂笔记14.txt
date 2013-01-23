@@ -1,0 +1,162 @@
+代理模式的示例代码：
+public interface Subject {
+    void request();
+}
+
+public class RealSubject implements Subject {
+    @Override
+    public void request() {
+        System.out.println("real subject request");
+    }
+}
+
+public class Proxy implements Subject {
+    private RealSubject realSubject;
+
+    public Proxy(RealSubject realSubject) {
+        this.realSubject = realSubject;
+    }
+
+    @Override
+    public void request() {
+        System.out.print("proxy request first, ");
+        this.realSubject.request();
+    }
+}
+
+使用保护代理实现项目实例：
+public interface Member {
+    void setSex(String sex);
+
+    String getSex();
+
+    void setInterest(String interest);
+
+    String getInterest();
+
+    void addFriendComment(String friendComment);
+
+    List<String> getFriendComments();
+}
+
+public class RealMember implements Member {
+    private String name;
+    private String sex;
+    private String interest;
+    private List<String> friendComments = new ArrayList<String>();
+
+
+    public RealMember(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    @Override
+    public String getSex() {
+        return sex;
+    }
+
+    @Override
+    public void setInterest(String interest) {
+        this.interest = interest;
+    }
+
+    @Override
+    public String getInterest() {
+        return interest;
+    }
+
+    @Override
+    public void addFriendComment(String friendComment) {
+        friendComments.add(friendComment);
+    }
+
+    @Override
+    public List<String> getFriendComments() {
+        return friendComments;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+public class MemberBodyguard implements Member {
+    private RealMember realMember;
+    private String operator;
+
+    public MemberBodyguard(RealMember realMember, String operator) {
+        this.realMember = realMember;
+        this.operator = operator;
+    }
+
+    @Override
+    public void setSex(String sex) {
+        otherMemberSetShouldThrowException();
+        this.realMember.setSex(sex);
+    }
+
+    @Override
+    public String getSex() {
+        return realMember.getSex();
+    }
+
+    @Override
+    public void setInterest(String interest) {
+        otherMemberSetShouldThrowException();
+        this.realMember.setInterest(interest);
+    }
+
+    private void otherMemberSetShouldThrowException() {
+        if(!operator.equals(realMember.getName())) {
+            throw new RuntimeException("不允许修改其他会员的信息");
+        }
+    }
+
+    @Override
+    public String getInterest() {
+        return realMember.getInterest();
+    }
+
+    @Override
+    public void addFriendComment(String friendComment) {
+        if(operator.equals(realMember.getName())) {
+            throw new RuntimeException("自己不可以评价自己");
+        }
+        realMember.addFriendComment(friendComment);
+    }
+
+    @Override
+    public List<String> getFriendComments() {
+        return realMember.getFriendComments();
+    }
+}
+
+使用java实现动态代理：
+public class MemberOwnerHandler implements InvocationHandler {
+    private RealMember realMember;
+
+    public MemberOwnerHandler(RealMember realMember) {
+        this.realMember = realMember;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (method.getName().startsWith("add")) {
+            throw new RuntimeException("自己不可以评价自己");
+        }
+        return method.invoke(realMember, args);
+    }
+}
+
+public static Member getProxy(RealMember realMember,
+                           InvocationHandler invocationHandler) {
+        return (Member) Proxy.newProxyInstance(
+                realMember.getClass().getClassLoader(),
+                realMember.getClass().getInterfaces(),
+                invocationHandler);
+    }

@@ -1,0 +1,161 @@
+中介者模式的示例代码：
+public abstract class Mediator {
+    protected ConcreteColleague1 concreteColleague1;
+    protected ConcreteColleague2 concreteColleague2;
+
+    public void setConcreteColleague1(ConcreteColleague1 concreteColleague1) {
+        this.concreteColleague1 = concreteColleague1;
+    }
+
+    public void setConcreteColleague2(ConcreteColleague2 concreteColleague2) {
+        this.concreteColleague2 = concreteColleague2;
+    }
+
+    protected abstract void executeMethodFrom1();
+
+    protected abstract void executeMethodFrom2();
+}
+
+public class ConcreteMediator extends Mediator {
+    @Override
+    protected void executeMethodFrom1() {
+        concreteColleague1.action1();
+    }
+
+    @Override
+    protected void executeMethodFrom2() {
+        concreteColleague2.action2();
+    }
+}
+
+public abstract class Colleague {
+    protected Mediator mediator;
+
+    protected Colleague(Mediator mediator) {
+        this.mediator = mediator;
+    }
+}
+
+public class ConcreteColleague1 extends Colleague {
+
+    protected ConcreteColleague1(Mediator mediator) {
+        super(mediator);
+    }
+
+    public void action1() {
+        System.out.println("concrete colleague 1 action1");
+    }
+
+    public void executeMethodFrom2() {
+        mediator.executeMethodFrom2();
+    }
+}
+
+public class ConcreteColleague2 extends Colleague {
+
+    protected ConcreteColleague2(Mediator mediator) {
+        super(mediator);
+    }
+
+    public void action2() {
+        System.out.println("concrete colleague 2 action2");
+    }
+
+    public void executeMethodFrom1() {
+        mediator.executeMethodFrom1();
+    }
+}
+
+使用中介者模式实现项目实例：
+public abstract class Mediator {
+
+    protected Seller seller;
+    protected Logistics logistics;
+    protected Buyer buyer;
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
+    public void setLogistics(Logistics logistics) {
+        this.logistics = logistics;
+    }
+
+    public void setBuyer(Buyer buyer) {
+        this.buyer = buyer;
+    }
+
+    public abstract String logisticsSend();
+
+    public abstract String buyerPay();
+
+    public abstract String getSellerProductInfo();
+
+    public abstract String getBuyerAddress();
+
+    public abstract String selectSellerProduct();
+
+    public abstract String selectLogisticsCompany();
+}
+
+public class ProductMediator extends Mediator {
+    @Override
+    public String logisticsSend() {
+        return logistics.send();
+    }
+
+    @Override
+    public String buyerPay() {
+        return buyer.pay();
+    }
+
+    @Override
+    public String getSellerProductInfo() {
+        return seller.getProductInfo();
+    }
+
+    @Override
+    public String getBuyerAddress() {
+        return buyer.getAddress();
+    }
+
+    @Override
+    public String selectSellerProduct() {
+        return seller.selectProduct();
+    }
+
+    @Override
+    public String selectLogisticsCompany() {
+        return logistics.selectCompany();
+    }
+}
+
+public abstract class Colleague {
+    protected Mediator mediator;
+
+    protected Colleague(Mediator mediator) {
+        this.mediator = mediator;
+    }
+}
+public class Seller extends Colleague {
+
+    public Seller(Mediator mediator) {
+        super(mediator);
+    }
+
+    public String sell() {
+        StringBuilder message = new StringBuilder();
+        message.append(mediator.logisticsSend());
+        message.append("\n");
+        message.append(mediator.buyerPay());
+        return message.toString();
+    }
+
+    public String getProductInfo() {
+        return "获取产品的信息";
+    }
+
+    public String selectProduct() {
+        return "选择卖家的产品";
+    }
+}
